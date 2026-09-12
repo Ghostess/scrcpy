@@ -259,10 +259,13 @@ run_demuxer(void *data) {
         params->format = AV_PIX_FMT_YUV420P;
 
 #ifdef HAVE_HWACCEL
-        if (demuxer->hwaccel) {
-            sc_hwaccel_configure_decoder(demuxer->hwaccel, codec_ctx,
-                                         demuxer->hwaccel_buffered_frames);
-        }
+    if (demuxer->hwaccel) {
+        // Configure hwaccel using codec parameters. The hwaccel helper
+        // will create any temporary context it needs internally.
+        sc_hwaccel_configure_decoder_from_params(demuxer->hwaccel,
+                            codec, params,
+                            demuxer->hwaccel_buffered_frames);
+    }
 #endif
 
     } else {

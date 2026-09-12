@@ -855,6 +855,12 @@ aoa_complete:
                     sc_hwaccel_count_buffered_frames(options);
                 sc_demuxer_enable_hardware_decoding(&s->video_demuxer, hwaccel,
                                                     buffered_frames);
+                // Also inform the decoder so it can configure its codec
+                // context for hardware decoding before opening the codec.
+#ifdef HAVE_HWACCEL
+                sc_decoder_set_hwaccel(&s->video_decoder, hwaccel,
+                                       buffered_frames);
+#endif
             }
         }
 #elif defined(__linux__) || defined(_WIN32) || defined(__APPLE__)

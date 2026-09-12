@@ -255,6 +255,33 @@ sc_hwaccel_configure_decoder(struct sc_hwaccel *hwaccel, AVCodecContext *ctx,
 }
 
 bool
+sc_hwaccel_configure_decoder_from_params(struct sc_hwaccel *hwaccel,
+                                         const AVCodec *codec,
+                                         const AVCodecParameters *params,
+                                         int buffered_frames) {
+    if (!hwaccel || !codec || !params) {
+        return false;
+    }
+
+    AVCodecContext *tmp_ctx = avcodec_alloc_context3(codec);
+    if (!tmp_ctx) {
+        LOG_OOM();
+        return false;
+    }
+
+    if (avcodec_parameters_to_context(tmp_ctx, params) < 0) {
+        LOGE("Could not copy codec parameters to temporary context");
+        avcodec_free_context(&tmp_ctx);
+        return false;
+    }
+
+    bool ok = sc_hwaccel_configure_decoder(hwaccel, tmp_ctx, buffered_frames);
+
+    avcodec_free_context(&tmp_ctx);
+    return ok;
+}
+
+bool
 sc_hwaccel_is_frame(const AVFrame *frame) {
     return frame->format == SC_HWACCEL_PIXEL_FORMAT;
 }

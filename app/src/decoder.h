@@ -20,10 +20,20 @@ struct sc_decoder {
 
     struct sc_stream_session session; // only initialized for video stream
     struct sc_size frame_size;
+#ifdef HAVE_HWACCEL
+    struct sc_hwaccel *hwaccel;
+    int hwaccel_buffered_frames;
+#endif
 };
 
 // The name must be statically allocated (e.g. a string literal)
 void
 sc_decoder_init(struct sc_decoder *decoder, const char *name);
+
+#ifdef HAVE_HWACCEL
+void
+sc_decoder_set_hwaccel(struct sc_decoder *decoder,
+                       struct sc_hwaccel *hwaccel, int buffered_frames);
+#endif
 
 #endif

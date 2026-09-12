@@ -49,6 +49,14 @@ bool
 sc_hwaccel_configure_decoder(struct sc_hwaccel *hwaccel, AVCodecContext *ctx,
                              int buffered_frames);
 
+// Configure hwaccel using codec parameters. The function creates a
+// temporary AVCodecContext internally and does not open the codec.
+bool
+sc_hwaccel_configure_decoder_from_params(struct sc_hwaccel *hwaccel,
+                                         const AVCodec *codec,
+                                         const AVCodecParameters *params,
+                                         int buffered_frames);
+
 bool
 sc_hwaccel_is_frame(const AVFrame *frame);
 
